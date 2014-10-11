@@ -49,6 +49,14 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 </p>
 
 
+<h3>3. 正文</h3>
+
+<p>
+	首先新建一个文件夹:
+	<pre>mkdir chat</pre>
+</p>
+
+
 
 
 

@@ -4,7 +4,6 @@
   "description": "first socket.io app",
   "dependencies": {
     "express": "^4.9.6",
-    "mime": "~1.2.7",
     "socket.io": "^1.1.0"
   }
 }
