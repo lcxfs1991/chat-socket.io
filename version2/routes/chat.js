@@ -19,7 +19,10 @@ chat.usedName = [];
 //user number
 chat.userNum = 0;
 //current room name
-chat.currentRoom = {};
+chat.currentRoom = [];
+
+//room list
+chat.roomList = ['Lobby'];
 
 //chat initialization with the passing http object
 chat.initialize = function(http) {
@@ -135,6 +138,7 @@ chat.assignRoom = function(socket) {
 	socket.join('Lobby', function(){
 		that.currentRoom[socket.id] = 'Lobby';
 		that.assignGuestName(socket);
+		socket.emit('room list', that.roomList);
 	});
 }
 
@@ -147,19 +151,40 @@ chat.changeRoom = function(socket, msg) {
 
 	this.io.to(this.currentRoom[socket.id]).emit('sys message', sysMsg);
 
-	socket.leave(this.currentRoom[socket.id], function(){
+	if (msg != 'room') {
+		socket.leave(this.currentRoom[socket.id], function(){
+			// console.log(that.currentRoom);
+			if (that.currentRoom.indexOf(that.currentRoom[socket.id]) == -1 && that.currentRoom[socket.id] != 'Lobby') {
+				var roomIndex = that.roomList.indexOf(that.currentRoom[socket.id]);
+				// delete that.roomList[roomIndex];
+				// that.roomList.length--;
+				// console.log(that.roomList);
+				that.roomList.splice(roomIndex, 1);
+			}
+			// console.log(that.currentRoom);
+			socket.join(msg);
 
-		socket.join(msg);
+			that.currentRoom[socket.id] = msg;
 
-		that.currentRoom[socket.id] = msg;
+			sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
+			
+			socket.emit('sys message', sysMsg);
 
-		sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
+			socket.emit('change room name', msg);
+
+			if (that.roomList.indexOf(msg) == -1) {
+				that.roomList.push(msg);
+				console.log(that.roomList);
+			}
+			
+			socket.emit('room list', that.roomList);
+
+		});
+	}
+	else {
+		socket.emit('sys message', '无法加入房间room！');
+	}
 		
-		socket.emit('sys message', sysMsg);
-
-		socket.emit('change room name', msg);
-
-	});
 
 	
 }

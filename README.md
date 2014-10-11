@@ -8,7 +8,7 @@ chat-socket.io
 </author>
 
 <p>
-	version1 Demo Page <a href="http://128.199.194.125:8081/">点击进入</a>请多开几个浏览器窗口进行聊天模拟。
+	version1 Demo Page <a href="http://128.199.194.125:8081/" target="_blank">点击进入</a>请多开几个浏览器窗口进行聊天模拟。
 </p>
 
 <h3>1. 前言</h3>

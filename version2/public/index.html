@@ -13,9 +13,15 @@
             <ul id="messages"></ul>
         </div>
         <div id="wrapper2">
-            <ul id="room">
+            <div>Command Instruction</div>
+            <ul id="command">
                 <li>输入 /join xxxx 加入房间</li>
                 <li>输入 /name xxxx 更改姓名</li>
+            </ul>
+            <br>
+            <div>Room List</div>
+            <ul id="room">
+                <li id="Lobby" class="roomBtn">Lobby</li>
             </ul>
         </div>
         <div>
@@ -105,6 +111,48 @@
         socket.on('change room name', function(msg) {
           $('#roomName').text(msg);
         });
+
+        socket.on('room list', function(msg){
+            var roomList = $("#room").children();
+            var roomId = [];
+            for (var i = 0; i < roomList.length; i++) {
+                roomId.push(roomList[i].id);
+            }
+
+            var count = [];
+
+            for (var i = 0; i < roomId.length; i++) {
+                count[i] = 0;
+            }
+
+            var roomIndex = false;
+            for (var i = 0; i < msg.length; i++) {
+                
+                roomIndex = roomId.indexOf(msg[i]);
+
+                if (roomIndex == -1) {
+                    $("#room").append('<li id="' + msg[i] + '" class="roomBtn">' + msg[i] + '</li>');
+                    $("#room li:last-child").bind("click", function(){
+                        socket.emit('change room', this.id);
+                    });
+                }
+                else {
+                    count[roomIndex]++;
+                }
+            }
+            
+            for (var i = 0; i < roomId.length; i++) {
+
+                if (count[i] == 0) {
+                    $("#" + roomId[i] + "").remove();
+                }
+            }
+
+        });
+
+        $('#Lobby').bind('click', function(){
+            socket.emit('change room', this.id);
+        })
 
     </script>
   </body>

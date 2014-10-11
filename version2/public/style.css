@@ -64,10 +64,27 @@ form button {
   background: #CCCCCC;
 }
 
+#wrapper2 div {
+  margin-left: 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: #FF0000;
+}
+
 #room {
   list-style-type: none;
+  margin-left: 10px;
+}
+
+#command {
+  list-style-type: none;
+  margin-left: 10px;
 }
 
 #roomName {
   color: #FF0000;
+}
+
+.roomBtn {
+  cursor: pointer;
 }
