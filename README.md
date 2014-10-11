@@ -44,7 +44,7 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 	<li>Websocket基础知识</li>
 	<li>Javascript</li>
 	<li>Node.js</li>
-	<li>Express.js（Node.js中最流行的网页框架</li>
+	<li>Express.js（Node.js中最流行的网页框架)</li>
 </ul>
 </p>
 
