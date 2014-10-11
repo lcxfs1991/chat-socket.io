@@ -3,5 +3,25 @@ chat-socket.io
 
 前端抢后端饭碗 -- Node.js + Socket.io 制作简易聊天室
 
-<a href="http://leehey.org">LeeHey 个人主页</a>
+<a href="http://leehey.org/homepage" target='_blank'>LeeHey 个人主页</a>
+
+<p>看到这个题目的时候干后端的别打我。在接触Socket.io之前曾经用PHP + jQuery写了一个低效的长轮询只有消息同步功能的小聊天室就已经耗尽心力，更不用说利用PHP的Socket接口写WebSocket的聊天室，那更是灾难。</p>
+
+<p>刚才一口气说了一堆大家都困惑的术语，接下来等本菜鸟解释一下。</p>
+
+<p>一般来说，浏览器在接收到客户端请求(request)的时候，会发送给服务器端进行处理，服务器端处理完毕后会返回结果(response), 这样就完整地完成了一次HTTP的请求。当客户端想再更新页面信息的时候，需要刷新浏览器，再完成一次HTTP请求。</p>
+
+<p>后来， AJAX的流行貌似使网站更加用户友好，增强了互动性，但实际上在效率上并没有提高，AJAX与后台的交互实际也是在一次又一次地完成HTTP请求。终于， 人们为了更好地实现实时应用，想出了一些办法，老办法叫Comet, 新办法叫Websocket.</p>
+
+<p>老办法Comet是改良自AJAX（轮询）。拿PHP作为例子，其原理就是，利用AJAX给PHP后台发送请求，后台PHP设置运行时间为无限，并用一个死循环使HTTP请求不返回而达到持续监听后台的效果。一旦死循环里的代码检测发现数据/文件被修改，则跳出循环，返回更新后的数据。这种办法简明易懂，后台代码不需要写太多，但因为连接不断开而大量服务器资源。</p>
+
+<p>新办法就是HTML5新的API叫做WebSocket.WebSocket采用了一些特殊的报头(Header)，使得浏览器和服务器只需要做一个握手的动作，就可以在浏览器和服务器之间建立一条连接通道。更进一步的原理，大家可以参考下面两篇文章:</p>
+
+<p>
+1. <a href="https://github.com/xionglun/goWebBook/blob/master/docs/08.2.md" target="_blank">https://github.com/xionglun/goWebBook/blob/master/docs/08.2.md</a>
+
+2. <a href="http://www.html5rocks.com/zh/tutorials/websockets/basics/" target="_blank">http://www.html5rocks.com/zh/tutorials/websockets/basics/</a>
+</p>
+
+
 
