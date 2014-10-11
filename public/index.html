@@ -175,7 +175,7 @@
         });
 
         //listent to 'change room name' event. Once the event is triggered (emitted), it will display message in html
-    //监听'change room name'事件。一旦事件触发(emit)，它将会在浏览器上显示信息        
+        //监听'change room name'事件。一旦事件触发(emit)，它将会在浏览器上显示信息        
         socket.on('change room name', function(msg) {
           $('#roomName').text(msg);
         });

@@ -33,8 +33,6 @@ chat.ioListen = function() {
 	var that = this;
 
 	this.io.on('connection', function(socket){
-
-		that.disconnect(socket);
 		
 		that.assignRoom(socket);
 
@@ -55,6 +53,8 @@ chat.ioListen = function() {
 		that.assignGuestName(socket);
 
 		that.changeName(socket);
+
+		that.disconnect(socket);
 
 	});
 }

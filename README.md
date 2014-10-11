@@ -177,6 +177,10 @@ http.listen(2501, function(){
 	</ul>
 </p>
 
+<p>
+网上大部份教程只会教怎么样搭建立一个消息发送的简单聊天室，而我今天打算包含更丰富的更能例如新建聊天室以及改名字。
+</p>
+
 <p>首先在chat.js中加入以下代码:</p>
 
 <pre>
@@ -229,8 +233,6 @@ chat.ioListen = function() {
 	var that = this;
 
 	this.io.on('connection', function(socket){
-
-		that.disconnect(socket);
 		
 		that.assignRoom(socket);
 
@@ -252,18 +254,150 @@ chat.ioListen = function() {
 
 		that.changeName(socket);
 
+		that.disconnect(socket);
+
 	});
 }
 </pre>
 
+<p>
+	下面，我们对每个处理的方法进行剖析。
+</p>
+
 <pre>
+//assign room 'Lobby' once they enter
+chat.assignRoom = function(socket) {
+	
+	var that = this;
+	socket.join('Lobby', function(){
+		that.currentRoom[socket.id] = 'Lobby';
+	});
+}
+</pre>
+
+<p>
+	assignRoom方法顾名思义就是自动给新加入的用户分配房间。有socket.join直接输入聊天室的名字就可以了，之后可以直接调socket.io自带的方法来得知道应该向用户所在的聊天室进行消息广播。然后用currentRoom存放用户聊天室的名字。
+</p>
+
+<pre>
+//chat.js change room
+chat.changeRoom = function(socket, msg) {
+
+	var that = this;
+
+	var sysMsg = that.userName[socket.id] + ' left room ' + that.currentRoom[socket.id];
+
+	this.io.to(this.currentRoom[socket.id]).emit('sys message', sysMsg);
+
+	socket.leave(this.currentRoom[socket.id], function(){
+
+		socket.join(msg);
+
+		that.currentRoom[socket.id] = msg;
+
+		sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
+		
+		socket.emit('sys message', sysMsg);
+
+		socket.emit('change room name', msg);
+
+	});
+	
+}
+</pre>
+
+<p>
+如果要更改房间，就可调用changeRoom方法。this.io.to(roomName)就是利用socket.io自带的函数给用户所在的聊天室进行消息广播。然后socket.leave即是离开聊天室的意思。
+</p>
+
+<pre>
+// send user message
+chat.userMsg = function(socket, msg) {
+	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+}
+
+//send system message
+chat.sysMsg = function(socket, msg) {
+	this.io.to(this.currentRoom[socket.id]).emit('sys message', msg);
+}
+</pre>
+
+<p>
+chat.userMsg 和 chat.sysMsg分别是发送用户消息和系统消息的方法。他们都用到了上文提到的this.io.to进行聊天室广播。
+</p>
+
+<pre>
+//assign a guest name to new joining user
+chat.assignGuestName = function(socket) {
+
+	this.userName[socket.id] = 'Guest' + this.userNum;
+	this.usedName.push('Guest' + this.userNum);
+	this.userNum++;
+
+	var msg = this.userName[socket.id] + ' enter the room! Welcome!';
+
+	this.io.emit('new user', msg);
+
+}
+
+//change user name
+chat.changeName = function(socket) {
+
+	var that = this;
+
+	socket.on('change name', function(msg){
+		if (that.usedName.indexOf(msg) == -1) {
+
+			var nameIndex = that.usedName.indexOf(that.userName[socket.id]);
+			that.userName[socket.id] = msg;
+			that.usedName[nameIndex] = msg;
+			that.io.emit('sys message', 'Your name has been changed as ' + msg);
+		}
+		else {
+			that.io.emit('sys message', 'Your name has been used');
+		}
+
+	});
+}
+</pre>
+
+<p>
+	assignGuestName和changeName和之后assignRoom的changeRoom相当类似，。通过userName存放用户姓名，usedName判断是否有重名，然后利用this.io.emit去解放系统消息。
+</p>
+
+<p>
+	后台chat.js的代码基本介绍完毕。然后我们将处理前端的代码。
+</p>
+
+<p>
 	然后新建/chat/public/index.html并录入HTML代码（由于github会过滤部份HTML的关系，请到代码管理的/public/html/里面抓取代码。
-</pre>
+</p>
 
-<pre>
-
-</pre>
-
+<p>
+	前后端的代码基本录入完成后，我们将结合两者进行说明。首先，我们要理解,方法socket.emit和socket.on是相对应而存在的，on是对event的监听，emit是对event的触发。例如，
+	在前端，我们通过
+	<pre>
+	socket.emit('chat message', msg);
+	</pre>
+	触发聊天消息的事件。
+	在后端我们通过
+	<pre>
+	socket.on('chat message', function(msg){
+		that.userMsg(socket, msg);
+	});
+	</pre>
+	进行聊天消息事件的监听。在chat.userMsg中，我们通过
+	<pre>
+	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+	</pre>
+	进行聊天消息事件的触发，在前端的代码中，我们通过
+	<pre>
+	socket.on('chat message', function(msg){
+        showMsg(msg);
+    });
+	</pre>
+	进行聊天消息的监听并显示到浏览器中。socket.emit和socket.on是一一对应的，上面前后端代码结合起来形成了整个消息从前端输入到后台处理，再从后台推送到其它用户前台的整个流程。
+</p>
 
 
 
