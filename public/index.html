@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      #container {width: 100%;}
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #wrapper1 {position:absolute; position:relative; float: left; width: 80%;}
+      #messages {list-style-type: none; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #wrapper2 {position:absolute; float: left;  margin-left: 80%; width: 20%; height: 100%; background: #CCCCCC;}
+      #room {list-style-type: none;}
+      #roomName {color: #FF0000;}
+    </style>
+  </head>
+  <body>
+    <div id="container">
+        <div>
+          <div>Room Name: <span id="roomName">Lobby</span></div>
+        </div>
+        <div id="wrapper1">
+            <ul id="messages"></ul>
+        </div>
+        <div id="wrapper2">
+            <ul id="room">
+                <li>11</li>
+            </ul>
+        </div>
+        <div>
+            <form action="">
+              <input id="m" autocomplete="off" />
+              <button>Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        var socket = io();
+
+        function showMsg(msg) {
+            $('#messages').append($('<li>').text(msg));
+        }
+
+        function dispatchCommand(msg) {
+
+            if (msg.substr(0,1) =='/') {
+
+                msg = msg.substr(1,msg.length);
+                var msgArr = msg.split(' ');
+
+                if (msgArr[0] === 'join') {
+                    socket.emit('change room', msgArr[1]);
+                }
+                else if (msgArr[0] === 'name') {
+                    socket.emit('change name', msgArr[1]);
+                }
+
+            }
+            else {
+                socket.emit('chat message', msg);
+
+            }
+        }
+
+        $('form').submit(function() {
+
+            var msg = $('#m').val();
+            dispatchCommand(msg)
+            
+            $('#m').val('');
+            return false;
+        });
+
+        socket.on('chat message', function(msg){
+            showMsg(msg);
+        });
+
+        socket.on('sys message', function(msg){
+            showMsg(msg);
+        });
+
+        socket.on('new user', function(msg) {
+            showMsg(msg);
+        });
+
+        socket.on('exit user', function(msg) {
+            showMsg(msg);
+        });
+
+        socket.on('change room name', function(msg) {
+          $('#roomName').text(msg);
+        });
+
+    </script>
+  </body>
+</html>
