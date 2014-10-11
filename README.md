@@ -374,29 +374,28 @@ chat.changeName = function(socket) {
 </p>
 
 <p>
-	前后端的代码基本录入完成后，我们将结合两者进行说明。首先，我们要理解,方法socket.emit和socket.on是相对应而存在的，on是对event的监听，emit是对event的触发。例如，
-	在前端，我们通过
-	<pre>
-	socket.emit('chat message', msg);
-	</pre>
-	触发聊天消息的事件。
-	在后端我们通过
-	<pre>
-	socket.on('chat message', function(msg){
-		that.userMsg(socket, msg);
-	});
-	</pre>
-	进行聊天消息事件的监听。在chat.userMsg中，我们通过
-	<pre>
-	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
-	</pre>
-	进行聊天消息事件的触发，在前端的代码中，我们通过
-	<pre>
-	socket.on('chat message', function(msg){
-        showMsg(msg);
-    });
-	</pre>
-	进行聊天消息的监听并显示到浏览器中。socket.emit和socket.on是一一对应的，上面前后端代码结合起来形成了整个消息从前端输入到后台处理，再从后台推送到其它用户前台的整个流程。
+前后端的代码基本录入完成后，我们将结合两者进行说明。首先，我们要理解,方法socket.emit和socket.on是相对应而存在的，on是对event的监听，emit是对event的触发。例如，在前端，我们通过
+<pre>
+socket.emit('chat message', msg);
+</pre>
+触发聊天消息的事件。
+在后端我们通过
+<pre>
+socket.on('chat message', function(msg){
+	that.userMsg(socket, msg);
+});
+</pre>
+进行聊天消息事件的监听。在chat.userMsg中，我们通过
+<pre>
+this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+</pre>
+进行聊天消息事件的触发，在前端的代码中，我们通过
+<pre>
+socket.on('chat message', function(msg){
+    showMsg(msg);
+});
+</pre>
+进行聊天消息的监听并显示到浏览器中。socket.emit和socket.on是一一对应的，上面前后端代码结合起来形成了整个消息从前端输入到后台处理，再从后台推送到其它用户前台的整个流程。
 </p>
 
 
