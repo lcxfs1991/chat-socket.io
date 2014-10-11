@@ -142,13 +142,6 @@ chat.changeRoom = function(socket, msg) {
 	
 }
 
-// chat.listRoom = function(socket) {
-
-// 	socket.emit('list room', this.currentRoom);
-
-// }
-
-
 module.exports = chat;
 
 

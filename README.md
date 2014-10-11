@@ -50,9 +50,11 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 
 
 <h3>3. 正文</h3>
-
 <p>
-	首先我们需要安装Node.js以及其包管理npm。在此不赘述，请参考官方安装指南
+	运行环境: Mac OSX 10.9.5
+</p>
+<p>
+	首先我们需要安装Node.js以及其包管理npm。在此不赘述，请参考官方安装指南：
 </p>
 
 <p>
@@ -63,8 +65,78 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 	安装完之后，我们要新建一个文件夹。
 </p>
 <pre>
-		mkdir chat
-		cd chat
+mkdir chat
+cd chat
+</pre>
+
+<p>
+	然后我们新建一个/chat/package.json文件，并输入以下代码。这个文件存放Node.js应用的依赖环境及模块。
+</p>
+
+<pre>
+	{
+	  "name": "chat",
+	  "version": "0.0.1",
+	  "description": "first socket.io app",
+	  "dependencies": {
+	    "express": "^4.9.6",
+	    "socket.io": "^1.1.0"
+	  }
+	}
+
+</pre>
+
+<p>
+	然后输入以下命令，系统就会帮你自动安装所有需要的模块。并在/chat下面多出一个node_modules的文件夹存放所需的模块。
+</p>
+
+<pre>
+npm install
+</pre>
+
+<p>
+	/chat/index.js文件，并输入以下代码
+</p>
+
+<pre>
+/**
+ * index.js
+ * @author LeeHey 
+ * @email lcxfs1991@gmail.com
+ * @description
+ * This file is to setup the basic Node.js server and require necessary server module
+ */
+
+//express.js framework
+var express = require('express');
+var app = express();
+
+//create an http object based on express.js
+var http = require('http').Server(app);
+
+//module manage folder path
+var path = require('path');
+
+//main processing file
+var chat = require('./routes/chat');
+
+//set /public as the folder to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+//route / to /public/index.html
+app.get('/', function(req, res){
+  res.sendFile('./public/index.html');
+});
+
+
+//initialize all http setting in chat object
+chat.initialize(http);
+
+
+//listen to port 2501
+http.listen(2501, function(){
+  console.log('listening on *:2501');
+});
 </pre>
 
 
