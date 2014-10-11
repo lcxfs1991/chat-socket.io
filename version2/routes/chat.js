@@ -50,7 +50,6 @@ chat.ioListen = function() {
 			that.userMsg(socket, msg);
 		});
 
-		that.assignGuestName(socket);
 
 		that.changeName(socket);
 
@@ -61,6 +60,8 @@ chat.ioListen = function() {
 
 // send user message
 chat.userMsg = function(socket, msg) {
+
+	msg = this.userName[socket.id] + ' said: ' + msg;
 
 	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
 }
@@ -81,7 +82,7 @@ chat.assignGuestName = function(socket) {
 
 	var msg = this.userName[socket.id] + ' enter the room! Welcome!';
 
-	this.io.emit('new user', msg);
+	this.io.to(this.currentRoom[socket.id]).emit('new user', msg);
 
 }
 
@@ -133,6 +134,7 @@ chat.assignRoom = function(socket) {
 	var that = this;
 	socket.join('Lobby', function(){
 		that.currentRoom[socket.id] = 'Lobby';
+		that.assignGuestName(socket);
 	});
 }
 

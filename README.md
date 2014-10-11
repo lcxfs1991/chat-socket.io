@@ -7,6 +7,10 @@ chat-socket.io
 <a href="http://leehey.org/homepage" target='_blank'>LeeHey 个人主页</a>
 </author>
 
+<p>
+	version1 Demo Page <a href="http://128.199.194.125:8081/">点击进入</a>请多开几个浏览器窗口进行聊天模拟。
+</p>
+
 <h3>1. 前言</h3>
 
 <p>看到这个题目的时候干后端的别打我。在接触Socket.io之前曾经用PHP + jQuery写了一个低效的长轮询只有消息同步功能的小聊天室就已经耗尽心力，更不用说利用PHP的Socket接口写WebSocket的聊天室，那更是灾难。</p>
