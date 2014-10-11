@@ -95,7 +95,7 @@ npm install
 </pre>
 
 <p>
-	/chat/index.js文件，并输入以下代码
+	/chat/index.js文件，并输入以下代码。这个文件主要是Node.js主要的服务器搭建，模块处始化的地方。如果有Node.js基础的同学相信会比较熟悉。没有的同学也不要紧，可以先用着。
 </p>
 
 <pre>
@@ -145,6 +145,228 @@ chat.initialize(http);
 http.listen(2501, function(){
   console.log('listening on *:2501');
 });
+</pre>
+
+<p>
+	新建/chat/public 文件夹:
+</p>
+<pre>
+	mkdir public
+</pre>
+
+<p>
+	接下来新建/chat/routes 文件夹:
+</p>
+
+<pre>
+	mkdir routes
+</pre>
+
+<p>
+	然后新建 /chat/routes/chat.js以存放聊天室的基本业务逻辑。在chat.js里面，我们需要实现的有以下的几个基本的功能。
+</p>
+
+<p>
+	<ul>
+		<li>自动分配聊天室</li>
+		<li>更改聊天室</li>
+		<li>自动分配名字</li>
+		<li>更改名字</li>
+		<li>用户在相应聊天室里面发送消息</li>
+		<li>用户在加入、离开的时候会自动发送系统消息</li>
+	</ul>
+</p>
+
+<pre>
+	然后新建/chat/public/index.html并录入下面的代码。
+</pre>
+
+<pre>
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: 
+        border-box; 
+      }
+
+      body { 
+        font: 13px Helvetica, Arial; 
+      }
+
+      #container {
+        width: 100%;
+      }
+
+      form { 
+        background: #000; 
+        padding: 3px; 
+        position: fixed; 
+        bottom: 0; 
+        width: 100%; 
+      }
+
+      form input { 
+        border: 0; 
+        padding: 10px; 
+        width: 90%; 
+        margin-right: .5%; 
+      }
+
+      form button { 
+        width: 9%; 
+        background: rgb(130, 224, 255); 
+        border: none; 
+        padding: 10px; 
+      }
+
+      #wrapper1 {
+        position:absolute; 
+        position:relative; 
+        float: left; 
+        width: 80%;
+      }
+
+      #messages {
+        list-style-type: none; 
+        padding: 0; 
+      }
+
+      #messages li { 
+        padding: 5px 10px; 
+      }
+
+      #messages li:nth-child(odd) { 
+        background: #eee; 
+      }
+
+      #wrapper2 {
+        position:absolute; 
+        float: left;  
+        margin-left: 80%; 
+        width: 20%; 
+        height: 100%; 
+        background: #CCCCCC;
+      }
+
+      #room {
+        list-style-type: none;
+      }
+
+      #roomName {
+        color: #FF0000;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container">
+        <div>
+          <div>Room Name: <span id="roomName">Lobby</span></div>
+        </div>
+        <div id="wrapper1">
+            <ul id="messages"></ul>
+        </div>
+        <div id="wrapper2">
+            <ul id="room">
+                <li>11</li>
+            </ul>
+        </div>
+        <div>
+            <form action="">
+              <input id="m" autocomplete="off" />
+              <button>Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!--socket.io.js-->
+    <script src="/socket.io/socket.io.js"></script>
+    <!--jQuery-->
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        // socket object
+        // socket 对象
+        var socket = io();
+
+        // display message in html
+        // 在浏览器里显示信息
+        function showMsg(msg) {
+            $('#messages').append($('<li>').text(msg));
+        }
+
+        //dispatch command to different event 针对不同发送的信息进行命令分发
+        // /join xxxx --> join a room xxx 加入新聊天室xxx
+        // /name xxx --> change the name in chatroom 改名字为xxx
+        function dispatchCommand(msg) {
+
+            if (msg.substr(0,1) =='/') {
+
+                msg = msg.substr(1,msg.length);
+                var msgArr = msg.split(' ');
+
+                if (msgArr[0] === 'join') {
+                    socket.emit('change room', msgArr[1]);
+                }
+                else if (msgArr[0] === 'name') {
+                    socket.emit('change name', msgArr[1]);
+                }
+
+            }
+            else {
+                socket.emit('chat message', msg);
+
+            }
+        }
+
+        // once the form submit, it checks the text input and dispatch to different to command to process
+        // 一旦表单提交，它会检测输入文本并根本文本信息分发不同命令
+        $('form').submit(function() {
+
+            var msg = $('#m').val();
+            dispatchCommand(msg)
+            
+            $('#m').val('');
+            return false;
+        });
+
+        //listent to 'chat message' event. Once the event is triggered (emitted), it will display message in html
+        //监听'chat message'事件。一旦事件触发(emit)，它将会在浏览器上显示信息
+        socket.on('chat message', function(msg){
+            showMsg(msg);
+        });
+
+        //listent to 'sys message' event. Once the event is triggered (emitted), it will display message in html
+        //监听'sys message'事件。一旦事件触发(emit)，它将会在浏览器上显示信息
+        socket.on('sys message', function(msg){
+            showMsg(msg);
+        });
+
+        //listent to 'new user' event. Once the event is triggered (emitted), it will display message in html
+        //监听'new user'事件。一旦事件触发(emit)，它将会在浏览器上显示信息
+        socket.on('new user', function(msg) {
+            showMsg(msg);
+        });
+
+        //listent to 'exit user' event. Once the event is triggered (emitted), it will display message in html
+        //监听'exit user'事件。一旦事件触发(emit)，它将会在浏览器上显示信息
+        socket.on('exit user', function(msg) {
+            showMsg(msg);
+        });
+
+        //listent to 'change room name' event. Once the event is triggered (emitted), it will display message in html
+		//监听'change room name'事件。一旦事件触发(emit)，它将会在浏览器上显示信息        
+        socket.on('change room name', function(msg) {
+          $('#roomName').text(msg);
+        });
+
+    </script>
+  </body>
+</html>
 </pre>
 
 

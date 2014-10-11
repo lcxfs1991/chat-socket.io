@@ -1,20 +1,28 @@
+
+//express.js framework
 var express = require('express');
 var app = express();
+
+//socket io module
 var socketIo = require('socket.io');
 
+// create a new ojbect chat
 var chat = {};
 
+//chat property
 chat.io = false;
 chat.userName = {};
 chat.usedName = [];
 chat.userNum = 0;
 chat.currentRoom = {};
 
+//chat initialization with the passing http object
 chat.initialize = function(http) {
 	this.io = socketIo(http);
 	this.ioListen();
 }
 
+// major socket listening method
 chat.ioListen = function() {
 	
 	var that = this;
@@ -46,17 +54,20 @@ chat.ioListen = function() {
 	});
 }
 
+// send user message
 chat.userMsg = function(socket, msg) {
 
 	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
 }
 
+//send system message
 chat.sysMsg = function(socket, msg) {
 
 	this.io.to(this.currentRoom[socket.id]).emit('sys message', msg);
 	
 }
 
+//assign a guest name to new joining user
 chat.assignGuestName = function(socket) {
 
 	this.userName[socket.id] = 'Guest' + this.userNum;
@@ -69,6 +80,7 @@ chat.assignGuestName = function(socket) {
 
 }
 
+//disconnection
 chat.disconnect = function(socket) {
 
 	var that = this;
@@ -90,6 +102,7 @@ chat.disconnect = function(socket) {
 
 }
 
+//change user name
 chat.changeName = function(socket) {
 
 	var that = this;
@@ -109,6 +122,7 @@ chat.changeName = function(socket) {
 	});
 }
 
+//assign room 'Lobby' once they enter
 chat.assignRoom = function(socket) {
 	
 	var that = this;
@@ -117,6 +131,7 @@ chat.assignRoom = function(socket) {
 	});
 }
 
+//change room
 chat.changeRoom = function(socket, msg) {
 
 	var that = this;
