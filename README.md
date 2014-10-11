@@ -26,7 +26,7 @@ chat-socket.io
 </p>
 
 <p>
-(2)<a href="http://www.html5rocks.com/zh/tutorials/websockets/basics/" target="_blank">http://www.html5rocks.com/zh/tutorials/websockets/basics/</a>
+(2) <a href="http://www.html5rocks.com/zh/tutorials/websockets/basics/" target="_blank">http://www.html5rocks.com/zh/tutorials/websockets/basics/</a>
 </p>
 
 <p>
@@ -52,9 +52,20 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 <h3>3. 正文</h3>
 
 <p>
-	首先新建一个文件夹:
-	<pre>mkdir chat</pre>
+	首先我们需要安装Node.js以及其包管理npm。在此不赘述，请参考官方安装指南
 </p>
+
+<p>
+	<a href="https://github.com/joyent/node/wiki/Installation">官方官装指南</a>
+</p>
+
+<p>
+	安装完之后，我们要新建一个文件夹。
+</p>
+<pre>
+		mkdir chat
+		cd chat
+</pre>
 
 
 
