@@ -158,7 +158,7 @@ chat.changeRoom = function(socket, msg) {
 				var roomIndex = that.roomList.indexOf(that.currentRoom[socket.id]);
 				// delete that.roomList[roomIndex];
 				// that.roomList.length--;
-				// console.log(that.roomList);
+				console.log('del ' + that.roomList);
 				that.roomList.splice(roomIndex, 1);
 			}
 			// console.log(that.currentRoom);
@@ -167,17 +167,17 @@ chat.changeRoom = function(socket, msg) {
 			that.currentRoom[socket.id] = msg;
 
 			sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
-			
-			socket.emit('sys message', sysMsg);
-
-			socket.emit('change room name', msg);
 
 			if (that.roomList.indexOf(msg) == -1) {
 				that.roomList.push(msg);
-				console.log(that.roomList);
+				console.log('add ' + that.roomList);
 			}
+
+			socket.emit('sys message', sysMsg);
+
+			socket.emit('change room name', {'msg': msg, 'roomList': that.roomList});
 			
-			socket.emit('room list', that.roomList);
+			that.io.emit('room list', that.roomList);
 
 		});
 	}

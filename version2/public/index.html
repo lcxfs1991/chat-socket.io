@@ -109,10 +109,8 @@
         //listent to 'change room name' event. Once the event is triggered (emitted), it will display message in html
         //监听'change room name'事件。一旦事件触发(emit)，它将会在浏览器上显示信息        
         socket.on('change room name', function(msg) {
-          $('#roomName').text(msg);
-        });
+            $('#roomName').text(msg.msg);
 
-        socket.on('room list', function(msg){
             var roomList = $("#room").children();
             var roomId = [];
             for (var i = 0; i < roomList.length; i++) {
@@ -126,12 +124,12 @@
             }
 
             var roomIndex = false;
-            for (var i = 0; i < msg.length; i++) {
+            for (var i = 0; i < msg.roomList.length; i++) {
                 
-                roomIndex = roomId.indexOf(msg[i]);
+                roomIndex = roomId.indexOf(roomList[i]);
 
                 if (roomIndex == -1) {
-                    $("#room").append('<li id="' + msg[i] + '" class="roomBtn">' + msg[i] + '</li>');
+                    $("#room").append('<li id="' + msg.roomList[i] + '" class="roomBtn">' + msg.roomList[i] + '</li>');
                     $("#room li:last-child").bind("click", function(){
                         socket.emit('change room', this.id);
                     });
@@ -147,7 +145,6 @@
                     $("#" + roomId[i] + "").remove();
                 }
             }
-
         });
 
         $('#Lobby').bind('click', function(){
