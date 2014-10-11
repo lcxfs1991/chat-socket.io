@@ -177,8 +177,83 @@ http.listen(2501, function(){
 	</ul>
 </p>
 
+<p>首先在chat.js中加入以下代码:</p>
+
 <pre>
+//express.js framework
+//express.js框架
+var express = require('express');
+var app = express();
+
+//socket io module
+//socket io 模块
+var socketIo = require('socket.io');
+
+// create a new ojbect chat
+//新建一个新的chat对象
+var chat = {};
+
+//chat property
+//io object
+chat.io = false;
+//user name
+chat.userName = {};
+//name has been used
+chat.usedName = [];
+//user number
+chat.userNum = 0;
+//current room name
+chat.currentRoom = {};
+</pre>
+
+<p>
+	新建initialize方法来初始化	
+</p>
+
+<pre>
+//chat initialization with the passing http object
+chat.initialize = function(http) {
+	this.io = socketIo(http);
+	this.ioListen();
+}
+</pre>
+
+<p>
+	新建ioListen方法作为最主要的监听方法
+</p>
+
+<pre>
+// major socket listening method
+chat.ioListen = function() {
 	
+	var that = this;
+
+	this.io.on('connection', function(socket){
+
+		that.disconnect(socket);
+		
+		that.assignRoom(socket);
+
+		socket.on('change room', function(msg){
+
+			that.changeRoom(socket, msg);
+
+		});
+
+		socket.on('sys message', function(msg){
+			that.sysMsg(socket, msg);
+		});	
+
+		socket.on('chat message', function(msg){
+			that.userMsg(socket, msg);
+		});
+
+		that.assignGuestName(socket);
+
+		that.changeName(socket);
+
+	});
+}
 </pre>
 
 <pre>

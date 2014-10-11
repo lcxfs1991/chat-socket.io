@@ -10,10 +10,15 @@ var socketIo = require('socket.io');
 var chat = {};
 
 //chat property
+// io object
 chat.io = false;
+//user name
 chat.userName = {};
+//name has been used
 chat.usedName = [];
+//user number
 chat.userNum = 0;
+//current room name
 chat.currentRoom = {};
 
 //chat initialization with the passing http object
