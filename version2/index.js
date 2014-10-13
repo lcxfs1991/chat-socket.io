@@ -32,7 +32,7 @@ app.get('/', function(req, res){
 chat.initialize(http);
 
 
-//listen to port 2501
-http.listen(2501, function(){
-  console.log('listening on *:2501');
+//listen to port 2502
+http.listen(2502, function(){
+  console.log('listening on *:2502');
 });

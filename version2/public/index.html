@@ -113,12 +113,18 @@
         });
 
         socket.on('room list', function(msg){
+
+            // alert(msg);
+            
             var roomList = $("#room").children();
             var roomId = [];
+
+            //store room ID
             for (var i = 0; i < roomList.length; i++) {
                 roomId.push(roomList[i].id);
             }
 
+            //count initialization
             var count = [];
 
             for (var i = 0; i < roomId.length; i++) {

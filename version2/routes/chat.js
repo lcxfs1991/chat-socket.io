@@ -19,7 +19,7 @@ chat.usedName = [];
 //user number
 chat.userNum = 0;
 //current room name
-chat.currentRoom = [];
+chat.currentRoom = {};
 
 //room list
 chat.roomList = ['Lobby'];
@@ -154,14 +154,37 @@ chat.changeRoom = function(socket, msg) {
 	if (msg != 'room') {
 		socket.leave(this.currentRoom[socket.id], function(){
 			// console.log(that.currentRoom);
-			if (that.currentRoom.indexOf(that.currentRoom[socket.id]) == -1 && that.currentRoom[socket.id] != 'Lobby') {
+			// console.log(that.currentRoom[socket.id]);
+
+			var isExist = false;
+
+			if (that.currentRoom[socket.id] !== 'Lobby') {
+
+				for (key in that.currentRoom) {
+
+					if (key == socket.id) {
+						continue;
+					}
+
+					if (that.currentRoom[key] === that.currentRoom[socket.id]) {
+						isExist = true;
+						break;
+					}
+				}
+				
+			}
+			else {
+				isExist = true;
+			}
+
+			if (isExist === false) {
 				var roomIndex = that.roomList.indexOf(that.currentRoom[socket.id]);
-				// delete that.roomList[roomIndex];
-				// that.roomList.length--;
-				console.log('del ' + that.roomList);
+				console.log(roomIndex);
 				that.roomList.splice(roomIndex, 1);
 			}
-			// console.log(that.currentRoom);
+
+			console.log(isExist + '-' + that.roomList);
+			
 			socket.join(msg);
 
 			that.currentRoom[socket.id] = msg;
@@ -170,7 +193,7 @@ chat.changeRoom = function(socket, msg) {
 
 			if (that.roomList.indexOf(msg) == -1) {
 				that.roomList.push(msg);
-				console.log('add ' + that.roomList);
+				// console.log('add ' + that.roomList);
 			}
 
 			socket.emit('sys message', sysMsg);
