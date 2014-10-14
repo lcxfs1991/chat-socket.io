@@ -458,7 +458,16 @@ this.io.on('connection', function(socket){
 	//触发对某一房间的事件
 </pre>
 
-<h4>坑2. </h4>
+<h3>坑2. 对输入内容的处理</h3>
+<p>
+由于这是一个需要处理用户输入输出的聊天室，因此，非常需要对用户的输入输出进行过滤,否则很容易会受到xss攻击。这里socket.io似乎已经对用户的输入输出过滤，但并不代表开发者不需要注意这一点。尤其是前端的同学，可能会忽略这个通常由后端进行处理的点。
+</p>
+
+<h3>坑3. 并不是所有浏览器都支持Websocket</h3>
+<p>
+虽然socket.io自诩支持所有浏览器，都其实只是支持比较新的现代浏览器，如果想测试你的浏览器是否支持websocket可以访问下面网站进行测试。如果不支持，只好用comet作为替代方案。
+<a href="http://www.websocket.org/aboutwebsocket.html" target="_blank">http://www.websocket.org/aboutwebsocket.html</a>
+</p>
 
 
 
