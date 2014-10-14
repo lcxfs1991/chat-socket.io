@@ -17,7 +17,17 @@ chat-socket.io
 	请多开几个浏览器窗口进行聊天模拟。
 </p>
 
-<h3>1. 前言</h3>
+<h3>目录</h3>
+<p>
+	<ul>
+		<li><a href="#intro">1. 前言</a></li>
+		<li><a href="#knowledge">2. 基本知识</a></li>
+		<li><a href="#main">3. 正文</a></li>
+		<li><a href="#pieces">4. 坑，坑，还是坑</a></li>
+	</ul>
+</p>
+
+<h3><a name="intro">1. 前言</a></h3>
 
 <p>看到这个题目的时候干后端的别打我。在接触Socket.io之前曾经用PHP + jQuery写了一个低效的长轮询只有消息同步功能的小聊天室就已经耗尽心力，更不用说利用PHP的Socket接口写WebSocket的聊天室，那更是灾难。</p>
 
@@ -47,7 +57,7 @@ chat-socket.io
 Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="http://socket.io/" target="_blank">官方网站</a>里面还自带了后台实现的代码。我们用Node.js也是奔着这一点去的，因为你们会发其前后端代码居然一模一样，我们毋须再为PHP，JAVA那些繁杂的代码而忧心。
 </p>
 
-<h3>2. 基本知识</h3>
+<h3><a name="knowledge">2. 基本知识</a></h3>
 
 <p>
 <ul>
@@ -59,7 +69,7 @@ Socket.io是使用得非常普遍的前端调用Websocket的库，其<a href="ht
 </p>
 
 
-<h3>3. 正文</h3>
+<h3><a name="main">3. 正文</a></h3>
 <p>
 	运行环境: Mac OSX 10.9.5
 </p>
@@ -408,6 +418,10 @@ socket.on('chat message', function(msg){
 进行聊天消息的监听并显示到浏览器中。socket.emit和socket.on是一一对应的，上面前后端代码结合起来形成了整个消息从前端输入到后台处理，再从后台推送到其它用户前台的整个流程。
 </p>
 
+<h3>><a name="pieces">4. 坑，坑，还是坑</a></h3>
+<p>
+	
+</p>
 
 
 
