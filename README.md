@@ -418,7 +418,7 @@ socket.on('chat message', function(msg){
 进行聊天消息的监听并显示到浏览器中。socket.emit和socket.on是一一对应的，上面前后端代码结合起来形成了整个消息从前端输入到后台处理，再从后台推送到其它用户前台的整个流程。
 </p>
 
-<h3>><a name="pieces">4. 坑，坑，还是坑</a></h3>
+<h3><a name="pieces">4. 坑，坑，还是坑</a></h3>
 <p>
 	
 </p>

@@ -122,10 +122,10 @@ chat.changeName = function(socket) {
 			var nameIndex = that.usedName.indexOf(that.userName[socket.id]);
 			that.userName[socket.id] = msg;
 			that.usedName[nameIndex] = msg;
-			that.io.emit('sys message', 'Your name has been changed as ' + msg);
+			socket.emit('sys message', 'Your name has been changed as ' + msg);
 		}
 		else {
-			that.io.emit('sys message', 'Your name has been used');
+			socket.emit('sys message', 'Your name has been used');
 		}
 
 	});

@@ -46,9 +46,11 @@ chat.ioListen = function() {
 			that.sysMsg(socket, msg);
 		});	
 
-		socket.on('chat message', function(msg){
-			that.userMsg(socket, msg);
-		});
+		// socket.on('chat message', function(msg){
+		// 	that.userMsg(socket, msg);
+		// });
+
+		that.userMsg(socket);
 
 		that.assignGuestName(socket);
 
@@ -60,11 +62,15 @@ chat.ioListen = function() {
 }
 
 // send user message
-chat.userMsg = function(socket, msg) {
+chat.userMsg = function(socket) {
 
-	msg = this.userName[socket.id] + ' said: ' + msg;
+	var that = this;
+	socket.on('chat message', function(msg){
+			msg = that.userName[socket.id] + ' said: ' + msg;
 
-	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+			that.io.to(that.currentRoom[socket.id]).emit('chat message', msg);
+	});
+	
 }
 
 //send system message
@@ -120,10 +126,10 @@ chat.changeName = function(socket) {
 			var nameIndex = that.usedName.indexOf(that.userName[socket.id]);
 			that.userName[socket.id] = msg;
 			that.usedName[nameIndex] = msg;
-			that.io.emit('sys message', 'Your name has been changed as ' + msg);
+			socket.emit('sys message', 'Your name has been changed as ' + msg);
 		}
 		else {
-			that.io.emit('sys message', 'Your name has been used');
+			socket.emit('sys message', 'Your name has been used');
 		}
 
 	});
