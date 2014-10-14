@@ -468,7 +468,7 @@ this.io.on('connection', function(socket){
 <a href="http://www.websocket.org/aboutwebsocket.html" target="_blank">http://www.websocket.org/aboutwebsocket.html</a>
 </p>
 <p>
-<img src="/websocket_spport.png" >
+<img src="https://github.com/lcxfs1991/chat-socket.io/blob/master/websocket_support.png" >
 </p>
 
 
