@@ -371,10 +371,10 @@ chat.changeName = function(socket) {
 			var nameIndex = that.usedName.indexOf(that.userName[socket.id]);
 			that.userName[socket.id] = msg;
 			that.usedName[nameIndex] = msg;
-			that.io.emit('sys message', 'Your name has been changed as ' + msg);
+			socket.emit('sys message', 'Your name has been changed as ' + msg);
 		}
 		else {
-			that.io.emit('sys message', 'Your name has been used');
+			socket.emit('sys message', 'Your name has been used');
 		}
 
 	});
@@ -420,8 +420,33 @@ socket.on('chat message', function(msg){
 
 <h3><a name="pieces">4. 坑，坑，还是坑</a></h3>
 <p>
-	
+	在做的过程中，我还是遇到不少坑值得大家以后留意的。
 </p>
+
+<h4>坑1. 对于socket以及io两种对象的理解</h4>
+<p>
+能过下面语句其实我们可以发现socket实质是io.socket。所以socket其实只是io对象的一个子对象。Socket中文译作插座的意思，实质上只是负责监听io对象的某一通道而已。
+</p>
+<pre>
+
+this.io.on('connection', function(socket){
+	// doing something
+});
+</pre>
+<p>通过下面代码相信大家可以知道两者区别</p>
+<pre>
+	this.io.emit('xxx', msg);
+	//触发对所有通道发送信息的事件
+</pre>
+<br>
+<pre>
+	this.io.socket('xxx', msg);
+	//触发仅对自己通道的事件
+</pre>
+<pre>
+	this.io.to(room).emit('xxx', msg);
+	//触发对某一房间的事件
+</pre>
 
 
 
