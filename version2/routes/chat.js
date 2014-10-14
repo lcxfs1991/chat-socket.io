@@ -45,13 +45,9 @@ chat.ioListen = function() {
 
 		});
 
-		socket.on('sys message', function(msg){
-			that.sysMsg(socket, msg);
-		});	
+		that.sysMsg(socket);
 
-		socket.on('chat message', function(msg){
-			that.userMsg(socket, msg);
-		});
+		that.userMsg(socket);
 
 
 		that.changeName(socket);
@@ -62,17 +58,26 @@ chat.ioListen = function() {
 }
 
 // send user message
-chat.userMsg = function(socket, msg) {
+chat.userMsg = function(socket) {
 
-	msg = this.userName[socket.id] + ' said: ' + msg;
+	var that = this;
 
-	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+	socket.on('chat message', function(msg){
+		msg = that.userName[socket.id] + ' said: ' + msg;
+
+		that.io.to(that.currentRoom[socket.id]).emit('chat message', msg);
+	});
+
 }
 
 //send system message
-chat.sysMsg = function(socket, msg) {
+chat.sysMsg = function(socket) {
 
-	this.io.to(this.currentRoom[socket.id]).emit('sys message', msg);
+	var that = this;
+
+	socket.on('sys message', function(msg){
+		that.io.to(that.currentRoom[socket.id]).emit('sys message', msg);
+	});	
 	
 }
 
@@ -153,8 +158,6 @@ chat.changeRoom = function(socket, msg) {
 
 	if (msg != 'room') {
 		socket.leave(this.currentRoom[socket.id], function(){
-			// console.log(that.currentRoom);
-			// console.log(that.currentRoom[socket.id]);
 
 			var isExist = false;
 

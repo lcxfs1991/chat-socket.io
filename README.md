@@ -458,21 +458,8 @@ this.io.on('connection', function(socket){
 	//触发对某一房间的事件
 </pre>
 
-<h4>坑2. 事件监听语句的逻辑顺序</h4>
-<p>大家在阅读我的代码的时候，会发现到在主要控制事件的ioListen方法里，会在下面三个突兀的代码写法，而其它都只是一行直接调用方法的代码。其实是有原因的。由于更换房间次数可能比较频繁，因此如果将监听的事件直接放入方法里的话，需要提早传入chat对象</p>
-<pre>
-socket.on('change room', function(msg){
-	that.changeRoom(socket, msg);
-});
+<h4>坑2. </h4>
 
-socket.on('sys message', function(msg){
-	that.sysMsg(socket, msg);
-});	
-
-socket.on('chat message', function(msg){
-	that.userMsg(socket, msg);
-});
-</pre>
 
 
 
