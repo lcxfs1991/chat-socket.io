@@ -36,19 +36,11 @@ chat.ioListen = function() {
 		
 		that.assignRoom(socket);
 
-		socket.on('change room', function(msg){
+		that.changeRoom(socket);
 
-			that.changeRoom(socket, msg);
+		that.sysMsg(socket);
 
-		});
-
-		socket.on('sys message', function(msg){
-			that.sysMsg(socket, msg);
-		});	
-
-		socket.on('chat message', function(msg){
-			that.userMsg(socket, msg);
-		});
+		that.userMsg(socket);
 
 		that.assignGuestName(socket);
 
@@ -60,18 +52,26 @@ chat.ioListen = function() {
 }
 
 // send user message
-chat.userMsg = function(socket, msg) {
+chat.userMsg = function(socket) {
 
-	msg = this.userName[socket.id] + ' said: ' + msg;
+	var that = this;
 
-	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
-	
+	socket.on('chat message', function(msg){
+		msg = that.userName[socket.id] + ' said: ' + msg;
+
+		that.io.to(that.currentRoom[socket.id]).emit('chat message', msg);
+	});
+
 }
 
 //send system message
-chat.sysMsg = function(socket, msg) {
+chat.sysMsg = function(socket) {
 
-	this.io.to(this.currentRoom[socket.id]).emit('sys message', msg);
+	var that = this;
+
+	socket.on('sys message', function(msg){
+		that.io.to(that.currentRoom[socket.id]).emit('sys message', msg);
+	});	
 	
 }
 
@@ -140,29 +140,32 @@ chat.assignRoom = function(socket) {
 }
 
 //change room
-chat.changeRoom = function(socket, msg) {
+chat.changeRoom = function(socket) {
 
 	var that = this;
 
-	var sysMsg = that.userName[socket.id] + ' left room ' + that.currentRoom[socket.id];
+	socket.on('change room', function(msg){
 
-	this.io.to(this.currentRoom[socket.id]).emit('sys message', sysMsg);
+		var sysMsg = that.userName[socket.id] + ' left room ' + that.currentRoom[socket.id];
 
-	socket.leave(this.currentRoom[socket.id], function(){
+		that.io.to(that.currentRoom[socket.id]).emit('sys message', sysMsg);
 
-		socket.join(msg);
+		socket.leave(that.currentRoom[socket.id], function(){
 
-		that.currentRoom[socket.id] = msg;
+			socket.join(msg);
 
-		sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
-		
-		socket.emit('sys message', sysMsg);
+			that.currentRoom[socket.id] = msg;
 
-		socket.emit('change room name', msg);
+			sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
+			
+			socket.emit('sys message', sysMsg);
+
+			socket.emit('change room name', msg);
+
+		});
 
 	});
 
-	
 }
 
 module.exports = chat;

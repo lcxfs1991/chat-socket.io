@@ -256,19 +256,11 @@ chat.ioListen = function() {
 		
 		that.assignRoom(socket);
 
-		socket.on('change room', function(msg){
+		that.changeRoom(socket);
 
-			that.changeRoom(socket, msg);
+		that.sysMsg(socket);
 
-		});
-
-		socket.on('sys message', function(msg){
-			that.sysMsg(socket, msg);
-		});	
-
-		socket.on('chat message', function(msg){
-			that.userMsg(socket, msg);
-		});
+		that.userMsg(socket);
 
 		that.assignGuestName(socket);
 
@@ -301,28 +293,32 @@ chat.assignRoom = function(socket) {
 
 <pre>
 //chat.js change room
-chat.changeRoom = function(socket, msg) {
+chat.changeRoom = function(socket) {
 
 	var that = this;
 
-	var sysMsg = that.userName[socket.id] + ' left room ' + that.currentRoom[socket.id];
+	socket.on('change room', function(msg){
 
-	this.io.to(this.currentRoom[socket.id]).emit('sys message', sysMsg);
+		var sysMsg = that.userName[socket.id] + ' left room ' + that.currentRoom[socket.id];
 
-	socket.leave(this.currentRoom[socket.id], function(){
+		that.io.to(that.currentRoom[socket.id]).emit('sys message', sysMsg);
 
-		socket.join(msg);
+		socket.leave(that.currentRoom[socket.id], function(){
 
-		that.currentRoom[socket.id] = msg;
+			socket.join(msg);
 
-		sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
-		
-		socket.emit('sys message', sysMsg);
+			that.currentRoom[socket.id] = msg;
 
-		socket.emit('change room name', msg);
+			sysMsg = that.userName[socket.id] + ' join room ' + that.currentRoom[socket.id];
+			
+			socket.emit('sys message', sysMsg);
+
+			socket.emit('change room name', msg);
+
+		});
 
 	});
-	
+
 }
 </pre>
 
@@ -332,13 +328,27 @@ chat.changeRoom = function(socket, msg) {
 
 <pre>
 // send user message
-chat.userMsg = function(socket, msg) {
-	this.io.to(this.currentRoom[socket.id]).emit('chat message', msg);
+chat.userMsg = function(socket) {
+
+	var that = this;
+
+	socket.on('chat message', function(msg){
+		msg = that.userName[socket.id] + ' said: ' + msg;
+
+		that.io.to(that.currentRoom[socket.id]).emit('chat message', msg);
+	});
+
 }
 
 //send system message
-chat.sysMsg = function(socket, msg) {
-	this.io.to(this.currentRoom[socket.id]).emit('sys message', msg);
+chat.sysMsg = function(socket) {
+
+	var that = this;
+
+	socket.on('sys message', function(msg){
+		that.io.to(that.currentRoom[socket.id]).emit('sys message', msg);
+	});	
+	
 }
 </pre>
 
@@ -446,6 +456,22 @@ this.io.on('connection', function(socket){
 <pre>
 	this.io.to(room).emit('xxx', msg);
 	//触发对某一房间的事件
+</pre>
+
+<h4>坑2. 事件监听语句的逻辑顺序</h4>
+<p>大家在阅读我的代码的时候，会发现到在主要控制事件的ioListen方法里，会在下面三个突兀的代码写法，而其它都只是一行直接调用方法的代码。其实是有原因的。由于更换房间次数可能比较频繁，因此如果将监听的事件直接放入方法里的话，需要提早传入chat对象</p>
+<pre>
+socket.on('change room', function(msg){
+	that.changeRoom(socket, msg);
+});
+
+socket.on('sys message', function(msg){
+	that.sysMsg(socket, msg);
+});	
+
+socket.on('chat message', function(msg){
+	that.userMsg(socket, msg);
+});
 </pre>
 
 
