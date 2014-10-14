@@ -467,6 +467,9 @@ this.io.on('connection', function(socket){
 虽然socket.io自诩支持所有浏览器，其实只是支持比较新的现代浏览器，如果想测试你的浏览器是否支持websocket可以访问下面网站进行测试。如果不支持，只好用comet作为替代方案。
 <a href="http://www.websocket.org/aboutwebsocket.html" target="_blank">http://www.websocket.org/aboutwebsocket.html</a>
 </p>
+<p>
+<img src="/websocket_spport.png" >
+</p>
 
 
 
